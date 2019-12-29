@@ -54,13 +54,10 @@ def main(fname, matched_folder, output_fname):
                         new_xys.append((new_x, new_y))
                     times = split_time(new_txys[-1][0], diff_t, new_xys)
 
+                    # matching error..
                     if len(new_xys) == 1:
-                        new_txys.append((new_txys[-1][0]+diff_t,
-                                         new_xys[-1][0],
-                                         new_xys[-1][1],
-                                         '%d-%s' % (m['point']['road'],
-                                                    m['point']['heading'])))
                         continue
+
                     for t, (x, y) in zip(times, new_xys[1:-1]):
                         new_txys.append((t, x, y, None))
                     new_txys.append((times[-1],
