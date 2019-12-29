@@ -13,6 +13,8 @@ __author__ = 'sheep'
 
 def main(fname, matched_folder, output_fname):
     '''\
+    Parse map-matched results (by barefoot) to paths
+
     %prog [options] <traj_fname> <matched_folder> <output_fname>
     '''
     no_count = 0
