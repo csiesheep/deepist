@@ -11,7 +11,7 @@ validation_log = "./all.log"
 channel = 3
 
 image_width = image_height = 100
-max_len = 20
+max_len = 31
 
 cnn1d_dim = 1024
 cnn2d_dim = 1024

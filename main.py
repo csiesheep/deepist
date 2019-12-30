@@ -63,6 +63,7 @@ def train(training_loader):
         total_loss = loss+sub_loss
 
         #FIXME
+        penalties = 0
 #       in_channel = 3
 #       for ith in range(3):
 #           penalty1s += -(tf.reduce_mean(tf.abs(parameters[ith*4][1][1]))+tf.reduce_mean(tf.abs(parameters[ith*4+2][1][1])))
@@ -86,7 +87,7 @@ def train(training_loader):
 
 ##      penalty1s = 0.01*(tf.reduce_mean(tf.nn.l2_loss(parameters[0]))+tf.reduce_mean(tf.nn.l2_loss(parameters[2])))
 
-        total_loss = loss+sub_loss+penalty1s
+        total_loss = loss+sub_loss+penaltes
 
     with tf.name_scope('optimizer'):
         train_op = tf.train.AdamOptimizer(config.learning_rate).minimize(total_loss)
