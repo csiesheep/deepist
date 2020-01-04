@@ -15,9 +15,9 @@ If you don't want to parse data from scratch by yourself, you can skip this step
 
 In this work, we apply [barefoot](https://github.com/bmwcarit/barefoot) for map matching based on [open street map(OSM)](https://www.openstreetmap.org/) data.
 
-Some downloadable OSM data:
-[portugal](https://download.geofabrik.de/europe/portugal-latest.osm.pbf)
-[major cities](https://download.bbbike.org/osm/bbbike/)
+Some downloadable OSM data: <br/>
+[portugal](https://download.geofabrik.de/europe/portugal-latest.osm.pbf) <br/>
+[major cities](https://download.bbbike.org/osm/bbbike/) <br/>
 
 Scripts we implemented for barefoot will be released soon.
 
@@ -39,15 +39,30 @@ Scripts we implemented for barefoot will be released soon.
     
 ## Released data
 
-### Porto
+### Small test data
 
 * images [here]()
+* training file [here]()
+
+### Porto
+
+* trajectory data [here]()
+* path data [here]()
 * speed data [here]()
 * osm data [here](https://download.geofabrik.de/europe/portugal-latest.osm.pbf)
+* images [here]()
+* training file [here]()
 
 ### Chengdu
 
 * Be released soon
+
+## How to Use?
+
+First, to configurations of experiments in config.py<br/>
+Then, to run *DeepIST* experiments, execute the following command:<br/>
+
+    python main.py <training_file>
 
 ## Citing
 
