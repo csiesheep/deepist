@@ -24,7 +24,12 @@ def main(training_fname, options):
     '''
     if os.path.exists(config.validation_log):
         os.remove(config.validation_log)
+
+    assert config.max_len is not None, "Please set 'max_len' in config.py based on your data"
+    assert config.image_folder is not None, "Please set 'image_folder' in config.py"
+
     training_loader = loader.DataGenerator(training_fname,
+                                           config.image_folder,
                                            config.batch_size,
                                            config.image_width,
                                            config.image_height,
@@ -63,7 +68,7 @@ def train(training_loader):
         total_loss = loss+sub_loss
 
         #FIXME
-        penalties = 0
+        penalty = 0
 #       in_channel = 3
 #       for ith in range(3):
 #           penalty1s += -(tf.reduce_mean(tf.abs(parameters[ith*4][1][1]))+tf.reduce_mean(tf.abs(parameters[ith*4+2][1][1])))
@@ -87,7 +92,7 @@ def train(training_loader):
 
 ##      penalty1s = 0.01*(tf.reduce_mean(tf.nn.l2_loss(parameters[0]))+tf.reduce_mean(tf.nn.l2_loss(parameters[2])))
 
-        total_loss = loss+sub_loss+penaltes
+        total_loss = loss+sub_loss
 
     with tf.name_scope('optimizer'):
         train_op = tf.train.AdamOptimizer(config.learning_rate).minimize(total_loss)
@@ -121,7 +126,7 @@ def train(training_loader):
             sub_values = []
             for length, sub_value_list in zip(length_batch, sub_value_batch):
                 sub_values.extend(sub_value_list[:length])
-            _, l, sub_l, sub_p, p1 = sess.run([train_op, loss, sub_loss, sub_predictions, penalty1s],
+            _, l, sub_l, sub_p = sess.run([train_op, loss, sub_loss, sub_predictions],
                                            feed_dict={x: image_batch,
                                                       lengths: length_batch,
                                                       y: value_batch,
@@ -133,7 +138,6 @@ def train(training_loader):
 
             losses.append(l)
             sub_losses.append(sub_l)
-            penalties.append(p1)
 
             if iteration % step == 0:
                 print("{} Iteration {} loss: {:.3f} sub_loss: {:.3f}, penalties: {:.3f}".format(

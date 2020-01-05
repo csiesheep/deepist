@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- encoding: utf8 -*-
 
+import os
 from PIL import Image
 import random
 import tempfile
@@ -16,10 +17,11 @@ RANGE = tf.constant([0, 1, 0], dtype=tf.float32)
 
 class DataGenerator(object):
 
-    def __init__(self, fname, batch_size, image_width, image_height,
+    def __init__(self, fname, image_folder, batch_size, image_width, image_height,
                  ratio=0.1, max_len=10, channel=1,
                  shuffle=True, epoch=None, one_image=False):
         self.fname = fname
+        self.image_folder = image_folder
         self.image_width = image_width
         self.image_height = image_height
         self.batch_size = batch_size
@@ -69,7 +71,8 @@ class DataGenerator(object):
         with open(self.fname) as f:
             for line in f:
                 image_fnames, sub_values, value = line.strip().split()
-                image_fnames = image_fnames.split(',')
+                image_fnames = [os.path.join(self.image_folder, f)
+                                for f in image_fnames.split(',')]
                 sub_values = [[v] for v in map(float, sub_values.split(','))]
                 value = [float(value)]
                 length = len(image_fnames)

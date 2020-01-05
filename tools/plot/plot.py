@@ -24,9 +24,9 @@ geo_y_range = None
 max_speed = 150
 
 
-def main(options, traj_fname, speed_fname, pbf_fname, output_folder, output_fname):
+def main(options, path_fname, speed_fname, pbf_fname, output_folder, output_fname):
     '''\
-    %prog [options] <traj_fname> <speed_fname> <pbf_fname> <output_folder> <output_training_fname>
+    %prog [options] <path_fname> <speed_fname> <pbf_fname> <output_folder> <output_training_fname>
     '''
     roads = None
     if options.plot_road:
@@ -38,27 +38,31 @@ def main(options, traj_fname, speed_fname, pbf_fname, output_folder, output_fnam
     geo_y_range = base_geo_y_range * options.window_size
 
     no_speed_count = 0
-    road2speed = load_speed(speed_fname)
+    road2speed = load_speed(speed_fname, options.plot_speed)
     ith = -1
     with open(output_fname, 'w') as fo:
-        for traj, time, timestamp in load_trajs(traj_fname):
-            ith += 1
-            if ith % 1000 == 0:
-                print datetime.datetime.now(), ith
+        with open(path_fname) as f:
+            for line in f:
+                ith += 1
+#               if ith < 500000:
+#                   continue
+                if ith % 1000 == 0:
+                    print datetime.datetime.now(), ith
 
-            speeds = get_speeds(traj, timestamp, road2speed,
-                                options.plot_speed, options.is_hourly)
-            if speeds is None:
-                no_speed_count += 1
-                continue
-            sub_trajs, sub_intervals, sub_speeds = split(traj, speeds, options.window_size)
-            assert len(sub_trajs) == len(sub_intervals)
-            assert len(sub_trajs) == len(sub_speeds)
-            fnames = plot_seq(ith, sub_trajs, sub_speeds, roads, output_folder,
-                              options.image_size, options.window_size)
-            fo.write("%s %s %s\n" % (','.join(fnames),
-                                     ','.join(map(str, sub_intervals)),
-                                     time))
+                traj, time, timestamp = load_trajs(line)
+                speeds = get_speeds(traj, timestamp, road2speed,
+                                    options.plot_speed, options.is_hourly)
+                if speeds is None:
+                    no_speed_count += 1
+                    continue
+                sub_trajs, sub_intervals, sub_speeds = split(traj, speeds, options.window_size)
+                assert len(sub_trajs) == len(sub_intervals)
+                assert len(sub_trajs) == len(sub_speeds)
+                fnames = plot_seq(ith, sub_trajs, sub_speeds, roads, output_folder,
+                                  options.image_size, options.window_size)
+                fo.write("%s %s %s\n" % (','.join(fnames),
+                                         ','.join(map(str, sub_intervals)),
+                                         time))
 
     print "no speeds path count:", no_speed_count
     return 0
@@ -117,9 +121,11 @@ def estimate_missing_speeds(speeds):
         i = j
     return speeds
 
-def load_speed(speed_fname):
+def load_speed(speed_fname, plot_speed):
     print 'loading speeds..'
     road2speed = {}
+    if not plot_speed:
+        return road2speed
     with open(speed_fname) as f:
         for line in f:
             road, hour_avg_speeds, avg_speed = line.strip().split('\t')
@@ -183,10 +189,11 @@ def split(traj, speeds, window_size):
 def plot_seq(id_, sub_trajs, sub_speeds, roads, output_folder, size, window_size):
     fnames = []
     for ith, (sub_traj, sub_sub_speeds) in enumerate(zip(sub_trajs, sub_speeds)):
-        fname = os.path.join(output_folder, ('%d_%d.bmp' % (id_, ith)))
+        base_fname = '%d_%d.bmp' % (id_, ith)
+        fname = os.path.join(output_folder, base_fname)
         plot_a_traj(sub_traj, sub_sub_speeds, roads, size, window_size, fname)
         ith += 1
-        fnames.append(fname)
+        fnames.append(base_fname)
     return fnames
 
 def plot_a_traj(traj, speeds, graph, size, window_size, fname):
@@ -298,18 +305,16 @@ def plot_a_traj(traj, speeds, graph, size, window_size, fname):
     image.save(fname)
 
 
-def load_trajs(fname):
-    with open(fname) as f:
-        for line in f:
-            _, txys, time, timestamp = line.split('\t')
-            traj = eval(txys)
-            times, lons, lats, roads = [], [], [], []
-            for (t, lon, lat, road) in traj:
-                times.append(t)
-                lons.append(lon)
-                lats.append(lat)
-                roads.append(road)
-            yield (lons, lats, times, roads), time, timestamp
+def load_trajs(line):
+    _, txys, time, timestamp = line.split('\t')
+    traj = eval(txys)
+    times, lons, lats, roads = [], [], [], []
+    for (t, lon, lat, road) in traj:
+        times.append(t)
+        lons.append(lon)
+        lats.append(lat)
+        roads.append(road)
+    return (lons, lats, times, roads), time, timestamp
 
 
 if __name__ == '__main__':
