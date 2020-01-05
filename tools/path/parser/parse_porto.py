@@ -11,6 +11,11 @@ __author__ = 'sheep'
 
 def main(fname, output_fname):
     '''\
+    Parse trajectories from raw data.
+    Each line is a trajectory with the following format:
+
+    uid [(time, lon., lat.,)] travel_time departure_timestamp  #seperated by <TAB>
+
     %prog [options] <fname> <output_fname>
     '''
     with open(fname, 'r') as f:
