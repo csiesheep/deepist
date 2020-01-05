@@ -16,8 +16,48 @@ def main(options, fname, output_fname):
     %prog [options] <path_fname> <output_fname>
     '''
     ith = 0
+    road_count = {}
+    road_id_count = {}
+    with open(fname) as f:
+        for line in f:
+            _, txys, _, ts = line.strip().split('\t')
+            txys = eval(txys)
+            for i in range(1, len(txys)):
+                pre_lon, pre_lat = txys[i-1][1], txys[i-1][2]
+                lon, lat = txys[i][1], txys[i][2]
+                key = (pre_lon, pre_lat, lon, lat)
+                if key not in road_count:
+                    road_count[key] = 1
+                else:
+                    road_count[key] += 1
+
+                road_id = txys[i-1][3]
+                if road_id is None:
+                    continue
+                if road_id not in road_id_count:
+                    road_id_count[road_id] = 1
+                else:
+                    road_id_count[road_id] += 1
+            ith += 1
+            if ith % 1000 == 0:
+                print ith, len(road_count)
+
+    ith = 0
     road_times = {}
     road_id_times = {}
+    for road in road_count:
+        if road_count[road] >= options.min_count:
+            road_times[road] = [[], [], [], [], [], [],
+                                [], [], [], [], [], [],
+                                [], [], [], [], [], [],
+                                [], [], [], [], [], []]
+    for road_id in road_id_count:
+        if road_id_count[road_id] >= options.min_count:
+            road_id_times[road_id] = [[], [], [], [], [], [],
+                                      [], [], [], [], [], [],
+                                      [], [], [], [], [], [],
+                                      [], [], [], [], [], []]
+
     with open(fname) as f:
         for line in f:
             _, txys, _, ts = line.strip().split('\t')
@@ -32,10 +72,7 @@ def main(options, fname, output_fname):
 
                 key = (pre_lon, pre_lat, lon, lat)
                 if key not in road_times:
-                    road_times[key] = [[], [], [], [], [], [],
-                                       [], [], [], [], [], [],
-                                       [], [], [], [], [], [],
-                                       [], [], [], [], [], []]
+                    continue
                 road_times[key][hour].append(diff_time)
 
             # get speeds of roads (represented by road ids)
@@ -50,10 +87,7 @@ def main(options, fname, output_fname):
                 d = misc.get_distance(pre_lon, pre_lat, lon, lat)
 
                 if road_id not in road_id_times:
-                    road_id_times[road_id] = [[], [], [], [], [], [],
-                                              [], [], [], [], [], [],
-                                              [], [], [], [], [], [],
-                                              [], [], [], [], [], []]
+                    continue
                 road_id_times[road_id][hour].append((d, diff_time))
 
             ith += 1
