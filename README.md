@@ -39,19 +39,15 @@ Scripts we implemented for barefoot will be released soon.
     
 ## Released data
 
-### Small test data
-
-* images [here]()
-* training file [here]()
-
 ### Porto
 
-* trajectory data [here]()
-* path data [here]()
-* speed data [here]()
+* raw trajectory data [here](https://psu.box.com/s/mtktjfj1pv4sb4xls2qg6pkpv4turoru)
+* trajectory data [here](https://psu.box.com/s/8f8qi7pl8o40cg5m8aurbq072tvpyqp6)
+* path data [here](https://psu.box.com/s/zbu3jsg921fqoqqz68xuja93l19x88nb)
+* speed data [here](https://psu.box.com/s/15hff7flpal3qu0nakmemw3udacafb4i)
 * osm data [here](https://download.geofabrik.de/europe/portugal-latest.osm.pbf)
-* images [here]()
-* training file [here]()
+* images [here](https://psu.box.com/s/r6h9b267k7ceygnxdn4tbr0qsf2l3ff0)
+* training file [here](https://psu.box.com/s/7oitglo76p2x7zd8czlj7d0zs1j2tuih)
 
 ### Chengdu
 
